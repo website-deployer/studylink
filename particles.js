@@ -9,6 +9,9 @@ const particles = [];
 const particleCount = 1000;
 const maxDistance = 100;
 const minDistance = 20;
+const lineGeometry = new THREE.BufferGeometry();
+const linePositions = [];
+const lineColors = [];
 
 class Particle {
     constructor() {
@@ -46,9 +49,9 @@ function init() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 5000);
     camera.position.z = 1000;
 
-    renderer = new THREE.WebGLRenderer({ 
+    renderer = new THREE.WebGLRenderer({
         antialias: true,
-        alpha: true 
+        alpha: true
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -138,6 +141,8 @@ function animate() {
     requestAnimationFrame(animate);
 
     const positions = particleGeometry.attributes.position.array;
+    linePositions.length = 0;
+    lineColors.length = 0;
 
     for (let i = 0; i < particles.length; i++) {
         const particle = particles[i];
@@ -145,24 +150,11 @@ function animate() {
         positions[i * 3] = particle.position.x;
         positions[i * 3 + 1] = particle.position.y;
         positions[i * 3 + 2] = particle.position.z;
-    }
 
-    particleGeometry.attributes.position.needsUpdate = true;
-
-    scene.children.forEach(child => {
-        if (child instanceof THREE.LineSegments) {
-            scene.remove(child);
-        }
-    });
-
-    const lineGeometry = new THREE.BufferGeometry();
-    const linePositions = [];
-    const lineColors = [];
-
-    for (let i = 0; i < particles.length; i++) {
+        // Draw lines based on distance
         for (let j = i + 1; j < particles.length; j++) {
             const distance = particles[i].position.distanceTo(particles[j].position);
-            
+
             if (distance < maxDistance && distance > minDistance) {
                 linePositions.push(
                     particles[i].position.x, particles[i].position.y, particles[i].position.z,
@@ -178,6 +170,8 @@ function animate() {
             }
         }
     }
+
+    particleGeometry.attributes.position.needsUpdate = true;
 
     if (linePositions.length > 0) {
         lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
