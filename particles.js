@@ -4,7 +4,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-let camera, scene, renderer, composer;
+let camera, scene, renderer, composer, points;
 const particles = [];
 const particleCount = 1000;
 const maxDistance = 150;
@@ -129,7 +129,7 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate);
 
-    const positions = particles[0].geometry.attributes.position.array;
+    const positions = points.geometry.attributes.position.array;
 
     for (let i = 0; i < particles.length; i++) {
         const particle = particles[i];
@@ -140,7 +140,7 @@ function animate() {
         positions[i * 3 + 2] = particle.position.z;
     }
 
-    particles[0].geometry.attributes.position.needsUpdate = true;
+    points.geometry.attributes.position.needsUpdate = true;
 
     // Draw connecting lines between nearby particles
     scene.children.forEach(child => {
