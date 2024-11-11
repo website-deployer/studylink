@@ -4,29 +4,28 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-let camera, scene, renderer, composer, points;
+let camera, scene, renderer, composer, particleSystem;
 const particles = [];
 const particleCount = 1000;
-const maxDistance = 150;
-const minDistance = 10;
+const maxDistance = 100;
+const minDistance = 20;
 
 class Particle {
     constructor() {
         this.position = new THREE.Vector3(
-            Math.random() * 1000 - 500,  // Reduced range
-            Math.random() * 1000 - 500,  // Reduced range
-            Math.random() * 500 - 250    // Reduced range
+            Math.random() * 2000 - 1000,
+            Math.random() * 2000 - 1000,
+            Math.random() * 2000 - 1000
         );
         this.velocity = new THREE.Vector3(
-            Math.random() * 1 - 0.5,     // Slower movement
-            Math.random() * 1 - 0.5,     // Slower movement
-            Math.random() * 1 - 0.5      // Slower movement
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1
         );
         this.acceleration = new THREE.Vector3();
     }
 
     update() {
-        // Add automatic movement
         const time = Date.now() * 0.0001;
         this.acceleration.x = Math.sin(time + this.position.x * 0.01) * 0.1;
         this.acceleration.y = Math.cos(time + this.position.y * 0.01) * 0.1;
@@ -36,7 +35,6 @@ class Particle {
         this.velocity.multiplyScalar(0.99);
         this.position.add(this.velocity);
 
-        // Contain particles within bounds
         if (Math.abs(this.position.x) > 1000) this.velocity.x *= -1;
         if (Math.abs(this.position.y) > 1000) this.velocity.y *= -1;
         if (Math.abs(this.position.z) > 1000) this.velocity.z *= -1;
@@ -45,9 +43,8 @@ class Particle {
 
 function init() {
     scene = new THREE.Scene();
-    
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 5000);
-    camera.position.z = 500; // Closer to the particles
+    camera.position.z = 1000;
 
     renderer = new THREE.WebGLRenderer({ 
         antialias: true,
@@ -58,7 +55,6 @@ function init() {
     renderer.setClearColor(0x000000, 0);
     document.getElementById('webgpu-container').appendChild(renderer.domElement);
 
-    // Create particles
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -66,12 +62,10 @@ function init() {
     for (let i = 0; i < particleCount; i++) {
         const particle = new Particle();
         particles.push(particle);
-
         positions[i * 3] = particle.position.x;
         positions[i * 3 + 1] = particle.position.y;
         positions[i * 3 + 2] = particle.position.z;
 
-        // Theme colors gradient
         const color = new THREE.Color();
         color.setHSL(Math.random() * 0.1 + 0.5, 0.7, 0.5);
         colors[i * 3] = color.r;
@@ -82,19 +76,34 @@ function init() {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    const material = new THREE.PointsMaterial({
-        size: 4,               // Larger points
-        vertexColors: true,
+    const material = new THREE.ShaderMaterial({
+        vertexShader: `
+            attribute vec3 color;
+            varying vec3 vColor;
+            void main() {
+                vColor = color;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = 2.0 * (300.0 / -mvPosition.z);
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `,
+        fragmentShader: `
+            varying vec3 vColor;
+            void main() {
+                float r = distance(gl_PointCoord, vec2(0.5));
+                if (r > 0.5) discard;
+                gl_FragColor = vec4(vColor, 1.0 - (r * 2.0));
+            }
+        `,
         blending: THREE.AdditiveBlending,
+        depthTest: false,
         transparent: true,
-        opacity: 0.8          // More visible
+        vertexColors: true
     });
-    
 
-    const points = new THREE.Points(geometry, material);
-    scene.add(points);
+    particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
 
-    // Post-processing
     composer = new EffectComposer(renderer);
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
@@ -107,7 +116,6 @@ function init() {
     );
     composer.addPass(bloomPass);
 
-    // Auto-rotating camera
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -129,20 +137,18 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate);
 
-    const positions = points.geometry.attributes.position.array;
+    const positions = particleSystem.geometry.attributes.position.array;
 
     for (let i = 0; i < particles.length; i++) {
         const particle = particles[i];
         particle.update();
-
         positions[i * 3] = particle.position.x;
         positions[i * 3 + 1] = particle.position.y;
         positions[i * 3 + 2] = particle.position.z;
     }
 
-    points.geometry.attributes.position.needsUpdate = true;
+    particleSystem.geometry.attributes.position.needsUpdate = true;
 
-    // Draw connecting lines between nearby particles
     scene.children.forEach(child => {
         if (child instanceof THREE.LineSegments) {
             scene.remove(child);
@@ -181,7 +187,7 @@ function animate() {
             vertexColors: true,
             blending: THREE.AdditiveBlending,
             transparent: true,
-            opacity: 0.4
+            opacity: 0.2
         });
 
         const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
