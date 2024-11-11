@@ -4,7 +4,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-let camera, scene, renderer, composer, particleSystem;
+let camera, scene, renderer, composer, particleSystem, particleGeometry;
 const particles = [];
 const particleCount = 1000;
 const maxDistance = 100;
@@ -55,7 +55,7 @@ function init() {
     renderer.setClearColor(0x000000, 0);
     document.getElementById('webgpu-container').appendChild(renderer.domElement);
 
-    const geometry = new THREE.BufferGeometry();
+    particleGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
@@ -73,8 +73,8 @@ function init() {
         colors[i * 3 + 2] = color.b;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.ShaderMaterial({
         vertexShader: `
@@ -101,7 +101,7 @@ function init() {
         vertexColors: true
     });
 
-    particleSystem = new THREE.Points(geometry, material);
+    particleSystem = new THREE.Points(particleGeometry, material);
     scene.add(particleSystem);
 
     composer = new EffectComposer(renderer);
@@ -137,7 +137,7 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate);
 
-    const positions = particleSystem.geometry.attributes.position.array;
+    const positions = particleGeometry.attributes.position.array;
 
     for (let i = 0; i < particles.length; i++) {
         const particle = particles[i];
@@ -147,7 +147,7 @@ function animate() {
         positions[i * 3 + 2] = particle.position.z;
     }
 
-    particleSystem.geometry.attributes.position.needsUpdate = true;
+    particleGeometry.attributes.position.needsUpdate = true;
 
     scene.children.forEach(child => {
         if (child instanceof THREE.LineSegments) {
