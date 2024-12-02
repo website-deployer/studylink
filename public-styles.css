@@ -1,0 +1,121 @@
+/* Core Elements */
+:root {
+    --primary-color: #2997ff;
+    --secondary-color: #00E6A0;
+    --background-light: #f8f9fa;
+    --text-color: #24292f;
+    --border-color: #d0d7de;
+    --hover-color: #2c974b;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary-gradient: linear-gradient(45deg, #2997ff, #00E6A0);
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation */
+.navbar {
+    background: #1a1a1a;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: 3rem 0;
+}
+
+main h1 {
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+/* FAQ Accordion */
+.accordion-item {
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.accordion-button {
+    background: white;
+    font-weight: 500;
+    padding: 1.25rem;
+}
+
+.accordion-button:not(.collapsed) {
+    color: white;
+    background: var(--primary-gradient);
+}
+
+.accordion-body {
+    padding: 1.25rem;
+    line-height: 1.6;
+}
+
+/* Terms & Privacy */
+main ol {
+    padding-left: 1.5rem;
+}
+
+main ol li {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: 8px;
+}
+
+/* Footer */
+footer {
+    background: #0a0a0a;
+    color: white;
+    padding: 3rem 0;
+    margin-top: auto;
+}
+
+.social-icons a {
+    color: white;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+    
+    main {
+        padding: 2rem 1rem;
+    }
+}
