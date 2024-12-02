@@ -13,7 +13,7 @@ const users = [];
 
 // Middleware
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'studylink-secret-key-KlH4S93BE',
     resave: false,
@@ -109,7 +109,7 @@ app.post('/register', async (req, res) => {
     
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
-        res.redirect('/aihelp');
+        res.json({ redirect: '/aihelp' });
     });
 });
 
@@ -124,7 +124,7 @@ app.post('/login', async (req, res) => {
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
         const redirectTo = req.query.redirect || '/aihelp';
-        res.redirect(redirectTo);
+        res.json({ redirect: redirectTo });
     });
 });
 
@@ -145,8 +145,10 @@ app.get('/auth/google/callback',
 );
 
 app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    req.logout(() => {
+        req.session.destroy();
+        res.redirect('/');
+    });
 });
 
 // Protected routes
@@ -178,4 +180,3 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
-
