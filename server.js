@@ -30,9 +30,11 @@ app.use(passport.session());
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID || '969411175916-ddtk5ustt9heujvevfagqd1g1fo8ltep.apps.googleusercontent.com',
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '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',
-    callbackURL: "/auth/google/callback"
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.NODE_ENV === 'production' 
+        ? 'https://studylink-hgla.onrender.com/auth/google/callback'
+        : '/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         let user = users.find(u => u.googleId === profile.id);
@@ -65,27 +67,27 @@ const isAuthenticated = (req, res, next) => {
 
 // Public routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/index.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/index.html'));
 });
 
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/about.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/about.html'));
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/login.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/login.html'));
 });
 
 app.get('/privacy', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/privacy.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/privacy.html'));
 });
 
 app.get('/terms', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/terms.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/terms.html'));
 });
 
 app.get('/faq', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/faq.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/faq.html'));
 });
 
 // Auth routes
@@ -149,7 +151,7 @@ app.get('/logout', (req, res) => {
 
 // Protected routes
 app.get('/aihelp', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/pages/aihelp.html'));
+    res.sendFile(path.join(__dirname, 'views/aihelp.html'));
 });
 
 // API routes
@@ -162,7 +164,7 @@ app.get('/api/user', isAuthenticated, (req, res) => {
 
 // Error handling
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, '../public/pages/404.html'));
+    res.status(404).sendFile(path.join(__dirname, 'public/pages/404.html'));
 });
 
 app.use((err, req, res, next) => {
@@ -176,3 +178,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
