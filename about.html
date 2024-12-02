@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - StudyLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../styles/public-styles.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <style>
+        /* About Hero Section */
+        .about-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 5rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-header .display-4 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-header .lead {
+            font-size: 1.4rem;
+            opacity: 0.9;
+        }
+
+        /* Mission & Vision Section */
+        .mission-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin: 5rem 0;
+        }
+
+        .mission-card, .vision-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .mission-card:hover, .vision-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .mission-card h2, .vision-card h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            margin: 5rem 0;
+        }
+
+        .features-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin: 5rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Timeline Section */
+        .timeline {
+            background: var(--background-light);
+            padding: 3rem;
+            border-radius: 20px;
+            margin: 5rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 2.5rem;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .timeline-date {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .mission-section,
+            .feature-grid,
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-header {
+                padding: 3rem 1.5rem;
+            }
+
+            .about-header .display-4 {
+                font-size: 2.5rem;
+            }
+
+            .mission-section,
+            .feature-grid,
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+
+            .mission-card, 
+            .vision-card,
+            .feature-item,
+            .stat-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>
+                StudyLink
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about.html"><i class="fas fa-info-circle me-1"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-envelope me-1"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        <div class="about-header text-center mb-5">
+            <h1 class="display-4">Your Study Buddy</h1>
+            <p class="lead">Making homework time more fun and less stressful.</p>
+        </div>
+    
+        <div class="mission-section">
+            <div class="mission-card">
+                <h2><i class="fas fa-bullseye"></i> Our Mission</h2>
+                <p>We created StudyLink to help students navigate their academic challenges with ease and confidence. Our mission is to provide a supportive environment where every learner can thrive.</p>
+            </div>
+            <div class="vision-card">
+                <h2><i class="fas fa-eye"></i> Looking Forward</h2>
+                <p>Our vision is to transform the educational experience by fostering a community that encourages collaboration, creativity, and continuous improvement.</p>
+            </div>
+        </div>        
+    
+        <div class="features-section mt-5">
+            <h2 class="text-center mb-4">What Makes StudyLink Unique</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-brain"></i>
+                    <h3>Smart Learning</h3>
+                    <p>Experience personalized learning that adapts to your unique style and pace.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <h3>Real Community</h3>
+                    <p>Join a vibrant community of learners who share knowledge and support each other.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>Always Available</h3>
+                    <p>Access help whenever you need it, day or night, to keep your learning on track.</p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="features-section mt-5">
+            <h2 class="text-center mb-4">Our Core Values</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>Quality</h3>
+                    <p>We are dedicated to delivering top-notch educational resources and support.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Integrity</h3>
+                    <p>We uphold honesty and transparency in all our interactions.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Innovation</h3>
+                    <p>We embrace change and continuously seek new ways to enhance learning.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section mt-5">
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Courses Offered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">50+</div>                
+                <div class="stat-label">Subjects Covered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Available Support</div>
+            </div>
+        </div>
+    
+        <div class="timeline mt-5">
+            <h2 class="text-center mb-4">Our Journey</h2>
+            <div class="timeline-item">
+                <div class="timeline-date">Nov. 23, 2024</div>
+                <p>Finished the about page and started to tackle the monster that is the login page along with the layout of the entire website, and other technical items in the backend.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Nov. 18, 2024</div>
+                <p>Created legal pages, started to work on the about page, and creating a list of items that would be included in the website</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Nov. 17, 2024</div>
+                <p>Created the brand after much thought and put final touches on the mainpage and started working on the URL links that would eventually create the website</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Nov. 14, 2024</div>
+                <p>Started working and building the mainpage of the platform, also known as the attraction of the website as thats where the website would be attracting most of its viewers and users.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About StudyLink</h5>
+                    <p>We are committed to supporting students in their academic journeys, offering assistance across various subjects.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="terms.html" class="text-light">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-light">Privacy Policy</a></li>
+                        <li><a href="faq.html" class="text-light">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4">
+            <div class="text-center">
+                <p>© 2024 StudyLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
