@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/png" href="Images/logo.png">
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>
+                StudyLink
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-info-circle me-1"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-envelope me-1"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <i class="fas fa-calculator me-2"></i>Math
+                    </div>
+                    <div class="card-body">
+                        <textarea id="mathQuestion" class="form-control mb-3" placeholder="Enter your math question here..."></textarea>
+                        <button class="btn btn-primary w-100" onclick="getHelp('math')">Get Help</button>
+                        <div id="mathAnswer" class="answer mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <i class="fas fa-book me-2"></i>ELA
+                    </div>
+                    <div class="card-body">
+                        <textarea id="elaQuestion" class="form-control mb-3" placeholder="Enter your ELA question here..."></textarea>
+                        <button class="btn btn-primary w-100" onclick="getHelp('ela')">Get Help</button>
+                        <div id="elaAnswer" class="answer mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <i class="fas fa-flask me-2"></i>Science
+                    </div>
+                    <div class="card-body">
+                        <textarea id="scienceQuestion" class="form-control mb-3" placeholder="Enter your science question here..."></textarea>
+                        <button class="btn btn-primary w-100" onclick="getHelp('science')">Get Help</button>
+                        <div id="scienceAnswer" class="answer mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About StudyLink</h5>
+                    <p>We're here to assist students with their academic needs, providing support in various subjects.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="Public Pages/terms.html" class="text-light">Terms of Service</a></li>
+                        <li><a href="Public Pages/privacy.html" class="text-light">Privacy Policy</a></li>
+                        <li><a href="Public Pages/faq.html" class="text-light">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4">
+            <div class="text-center">
+                <p>&copy; 2024 StudyLink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getHelp(subject) {
+            const question = document.getElementById(`${subject}Question`).value;
+            const answerElement = document.getElementById(`${subject}Answer`);
+
+            if (question.trim() === '') {
+                showAnswer(answerElement, 'Please enter a question.', 'warning');
+                return;
+            }
+
+            showLoadingState(answerElement);
+            
+            setTimeout(() => {
+                const answers = {
+                    math: "The solution to your math problem involves applying the Pythagorean theorem. Remember, a² + b² = c².",
+                    ela: "To improve your writing, focus on using varied sentence structures and strong, descriptive language.",
+                    science: "The process you're asking about is photosynthesis, which is how plants convert sunlight into energy."
+                };
+                
+                showAnswer(answerElement, answers[subject] || "I'm sorry, I don't have an answer for that specific question. Please try rephrasing or ask another question.", 'success');
+            }, 1500);
+        }
+
+        function showLoadingState(element) {
+            element.innerHTML = `
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            element.style.display = 'block';
+        }
+
+        function showAnswer(element, content, type = 'info') {
+            element.innerHTML = content;
+            element.classList.add('fade-in');
+            element.style.display = 'block';
+        }
+
+        // Smooth scrolling for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // Add animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+            
+            function checkScroll() {
+                animateElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementTop < windowHeight * 0.75) {
+                        element.classList.add('visible');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkScroll);
+            checkScroll(); // Initial check
+        });
+
+        document.querySelector('.btn-custom').addEventListener('click', (e) => {
+            e.preventDefault();
+            const featuresSection = document.querySelector('#features');
+            featuresSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+</body>
+</html>
