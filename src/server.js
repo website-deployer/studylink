@@ -29,6 +29,10 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/pages/login.html'));
 });
 
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/pages/about.html'));
+});
+
 app.post('/login', (req, res) => {
     req.session.isAuthenticated = true;
     res.json({ redirect: '/aihelp' });
