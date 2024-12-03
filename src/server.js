@@ -2,14 +2,9 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// In-memory user store (replace with database in production)
-const users = [];
 
 // Middleware
 app.use(express.json());
@@ -27,35 +22,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.NODE_ENV === 'production' 
-        ? 'https://studylink-hgla.onrender.com/auth/google/callback'
-        : '/auth/google/callback'
-}, async (accessToken, refreshToken, profile, done) => {
-    try {
-        let user = users.find(u => u.googleId === profile.id);
-        if (!user) {
-            user = {
-                id: users.length + 1,
-                googleId: profile.id,
-                email: profile.emails[0].value,
-                name: profile.displayName
-            };
-            users.push(user);
-        }
-        return done(null, user);
-    } catch (error) {
-        return done(error, null);
-    }
-}));
-
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser((id, done) => {
-    const user = users.find(u => u.id === id);
-    done(null, user);
+    done(null, { id: 1, email: 'user@example.com' });
 });
 
 // Auth middleware
@@ -89,75 +58,20 @@ app.get('/faq', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/pages/faq.html'));
 });
 
-// Auth routes
-app.post('/register', async (req, res) => {
-    const { email, password, name } = req.body;
-    
-    if (users.find(u => u.email === email)) {
-        return res.status(400).json({ message: 'Email already registered' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+// Simplified login route
+app.post('/login', (req, res) => {
     const user = {
-        id: users.length + 1,
-        email,
-        password: hashedPassword,
-        name
+        id: 1,
+        email: req.body.email,
+        name: 'User'
     };
-    users.push(user);
     
-    req.login(user, (err) => {
-        if (err) return res.status(500).json({ message: 'Error logging in' });
-        res.redirect('/aihelp');  // Changed from res.json to res.redirect
-    });
-});
-
-// Update the login route
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = users.find(u => u.email === email);
-    
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
         const redirectTo = req.query.redirect || '/aihelp';
-        res.json({ redirect: redirectTo });  // Change back to res.json
+        res.json({ redirect: redirectTo });
     });
 });
-
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = users.find(u => u.email === email);
-    
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    req.login(user, (err) => {
-        if (err) return res.status(500).json({ message: 'Error logging in' });
-        const redirectTo = req.query.redirect || '/aihelp';
-        res.redirect(redirectTo);  // Changed from res.json to res.redirect
-    });
-});
-
-app.get('/auth/google',
-    passport.authenticate('google', { 
-        scope: ['profile', 'email'],
-        prompt: 'select_account'
-    })
-);
-
-app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    (req, res) => {
-        const redirectTo = req.session.returnTo || '/aihelp';
-        delete req.session.returnTo;
-        res.redirect(redirectTo);
-    }
-);
 
 app.get('/logout', (req, res) => {
     req.logout(() => {
@@ -174,8 +88,8 @@ app.get('/aihelp', isAuthenticated, (req, res) => {
 // API routes
 app.get('/api/user', isAuthenticated, (req, res) => {
     res.json({
-        name: req.user.name,
-        email: req.user.email
+        name: 'User',
+        email: 'user@example.com'
     });
 });
 

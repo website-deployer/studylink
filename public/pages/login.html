@@ -280,33 +280,20 @@
         // Main login handler
         async function handleLogin(event) {
             event.preventDefault();
-            showLoading(true);
-            hideError();
-
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
 
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password, rememberMe })
-                });
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
 
-                const data = await response.json();
-                
-                if (response.ok && data.redirect) {
-                    window.location.href = data.redirect;
-                } else {
-                    showError(data.message || 'Login failed');
-                }
-            } catch (error) {
-                showError('Network error occurred');
-            } finally {
-                showLoading(false);
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
             }
         }
         
