@@ -64,32 +64,30 @@ const isAuthenticated = (req, res, next) => {
     res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
 };
 
-// Public routes
+// Route handlers
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/index.html'));
-});
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/login.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/index.html'));
 });
 
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/about.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/about.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/pages/login.html'));
 });
 
 app.get('/privacy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/privacy.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/privacy.html'));
 });
 
 app.get('/terms', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/terms.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/terms.html'));
 });
 
 app.get('/faq', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/faq.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/faq.html'));
 });
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Auth routes
 app.post('/register', async (req, res) => {
@@ -164,6 +162,9 @@ app.get('/api/user', isAuthenticated, (req, res) => {
         email: req.user.email
     });
 });
+
+// Static file serving
+app.use(express.static('public'));
 
 // Error handling
 app.use((req, res) => {
