@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | StudyLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <style>
+        :root {
+            --font-primary: 'Poppins', sans-serif;
+            --primary-gradient: linear-gradient(45deg, #2997ff, #00E6A0);
+            --dark-bg: #000000;
+            --text-light: #f5f5f7;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(to bottom, var(--dark-bg), #0a0a0a);
+            color: var(--text-light);
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-custom {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            text-shadow: 0 0 10px rgba(41, 151, 255, 0.8),
+                        0 0 20px rgba(41, 151, 255, 0.6),
+                        0 0 30px rgba(41, 151, 255, 0.4);
+            color: #fff !important;
+        }
+
+        .navbar-brand {
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            text-shadow: 0 0 10px rgba(0, 230, 160, 0.8),
+                        0 0 20px rgba(0, 230, 160, 0.6),
+                        0 0 30px rgba(0, 230, 160, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div id="three-container"></div>
+
+    <header class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>
+                StudyLink
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about"><i class="fas fa-info-circle me-1"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i> Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="error-code">404</div>
+        <h1 class="error-message">Page Not Found</h1>
+        <p class="mb-4">The page you're looking for seems to have vanished into another dimension.</p>
+        <a href="/" class="btn btn-custom">Back to Homepage</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('three-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Create multiple particle systems for depth
+            const particleSystems = [];
+            const particleGroups = 3;
+
+            for(let g = 0; g < particleGroups; g++) {
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCount = 7000;
+                const posArray = new Float32Array(particlesCount * 3);
+                const colors = new Float32Array(particlesCount * 3);
+                const sizes = new Float32Array(particlesCount);
+                const opacities = new Float32Array(particlesCount);
+
+                for(let i = 0; i < particlesCount * 3; i += 3) {
+                    // Enhanced spiral galaxy formation
+                    const radius = Math.random() * (8 + g * 2);
+                    const spinAngle = radius * (2 + Math.random());
+                    const branchAngle = (Math.PI * 2 * Math.random()) + ((i % 4) * ((2 * Math.PI) / 4));
+                    const heightVariation = Math.pow(Math.random(), 3) * (1 - radius / 10);
+                    
+                    posArray[i] = Math.cos(branchAngle + spinAngle) * radius;
+                    posArray[i + 1] = heightVariation * 2;
+                    posArray[i + 2] = Math.sin(branchAngle + spinAngle) * radius;
+
+                    // Dynamic color gradient
+                    const t = radius / 10;
+                    colors[i] = 0.16 + (t * 0.2);     
+                    colors[i + 1] = 0.59 + (t * 0.4); 
+                    colors[i + 2] = 1 - (t * 0.3);    
+
+                    // Varying sizes and opacities
+                    sizes[i/3] = Math.random() * 0.02 + 0.01;
+                    opacities[i/3] = Math.random() * 0.5 + 0.5;
+                }
+
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+                particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+                const particlesMaterial = new THREE.ShaderMaterial({
+                    vertexShader: `
+                        attribute float size;
+                        attribute float opacity;
+                        varying vec3 vColor;
+                        varying float vOpacity;
+                        void main() {
+                            vColor = color;
+                            vOpacity = opacity;
+                            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                            gl_PointSize = size * (300.0 / -mvPosition.z);
+                            gl_Position = projectionMatrix * mvPosition;
+                        }
+                    `,
+                    fragmentShader: `
+                        varying vec3 vColor;
+                        varying float vOpacity;
+                        void main() {
+                            float r = distance(gl_PointCoord, vec2(0.5));
+                            if (r > 0.5) discard;
+                            float glow = 1.0 - (r * 2.0);
+                            gl_FragColor = vec4(vColor, vOpacity * glow);
+                        }
+                    `,
+                    transparent: true,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending
+                });
+
+                const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+                particleSystem.rotation.x = Math.random() * Math.PI;
+                particleSystems.push(particleSystem);
+                scene.add(particleSystem);
+            }
+
+            camera.position.z = 8;
+
+            // Dynamic camera movement
+            let time = 0;
+            function animate() {
+                time += 0.001;
+                requestAnimationFrame(animate);
+
+                // Smooth camera motion
+                camera.position.y = Math.sin(time * 0.5) * 0.5;
+                camera.position.x = Math.cos(time * 0.3) * 0.5;
+                camera.lookAt(scene.position);
+
+                // Rotate particle systems
+                particleSystems.forEach((system, index) => {
+                    system.rotation.y += 0.0003 * (index + 1);
+                    system.rotation.z += 0.0001 * (index + 1);
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            // Enhanced mouse interaction
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - window.innerWidth / 2) / 1000;
+                mouseY = (event.clientY - window.innerHeight / 2) / 1000;
+                
+                particleSystems.forEach(system => {
+                    system.rotation.y += mouseX * 0.01;
+                    system.rotation.x += mouseY * 0.01;
+                });
+            });
+
+            // Responsive design
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+        });
+    </script>
+</body>
+</html>
