@@ -405,12 +405,13 @@
                 const modalTitle = document.querySelector('.modal-title');
                 const modalBody = document.querySelector('.modal-body');
                 
-                modalTitle.textContent = document.querySelector(`[onclick="openTool('${toolId}')"] h3`).textContent;
+                modalTitle.textContent = document.querySelector(`[onclick="openTool('${toolId}')"] h4`).textContent;
                 
                 if (toolImplementations[toolId]) {
                     toolImplementations[toolId].init(modalBody);
                 }
                 
+                const toolModal = new bootstrap.Modal(document.getElementById('toolModal'));
                 toolModal.show();
             };
 
