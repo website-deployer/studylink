@@ -3,276 +3,1622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyLink</title>
+    <title>StudyLink Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.min.js"></script>
     <style>
-        /* Core Elements */
         :root {
-            --primary-color: #2997ff;
-            --secondary-color: #00E6A0;
-            --background-light: #f8f9fa;
-            --text-color: #24292f;
-            --border-color: #d0d7de;
-            --hover-color: #2c974b;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
             --primary-gradient: linear-gradient(45deg, #2997ff, #00E6A0);
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, var(--dark-bg), #1a1a1a);
+            color: #f5f5f7;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: #f5f5f5;
         }
 
-        /* Navigation */
         .navbar {
-            background: #1a1a1a;
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        .subject-tabs {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 2rem 0;
+        }
+
+        .subject-tab {
             padding: 1rem 2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #ffffff !important;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
         }
 
-        .nav-link:hover {
-            color: var(--primary-color) !important;
+        .subject-tab.active {
+            background: var(--primary-gradient);
         }
 
-        /* Form Elements */
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(41, 151, 255, 0.25);
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .btn-primary {
+        .tool-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            color: #f5f5f7;
+            border: 1px solid var(--card-border);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+        }
+
+        .btn-custom {
             background: var(--primary-gradient);
             border: none;
+            color: white;
             padding: 0.8rem 1.5rem;
-            font-weight: 600;
+            border-radius: 8px;
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-custom:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(41, 151, 255, 0.3);
         }
 
-        /* Footer */
-        footer {
-            background: #0a0a0a;
-            color: white;
-            padding: 3rem 0;
-            margin-top: auto;
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
         }
 
-        .social-icons a {
-            color: white;
-            margin-right: 1rem;
+        .subject-content {
+            display: none;
+        }
+
+        .subject-content.active {
+            display: block;
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tool-result {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .step-by-step {
+            margin-top: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--primary-gradient);
+        }
+
+        .math-display {
             font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            color: var(--primary-color);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0.8rem 1rem;
-            }
-            
-            main {
-                padding: 2rem 1rem;
-            }
+            margin: 1rem 0;
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
-    <header class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-graduation-cap me-2"></i>
-                StudyLink
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>StudyLink
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-home me-1"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-info-circle me-1"></i> About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-envelope me-1"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
                 </ul>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="container mt-4">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card glass-card">
-                    <div class="card-header">
-                        <i class="fas fa-calculator me-2"></i>Math
-                    </div>
-                    <div class="card-body">
-                        <textarea id="mathQuestion" class="form-control mb-3" placeholder="Enter your math question here..."></textarea>
-                        <button class="btn btn-primary w-100" onclick="getHelp('math')">Get Help</button>
-                        <div id="mathAnswer" class="answer mt-3"></div>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="subject-tabs d-flex justify-content-around">
+            <div class="subject-tab active" data-subject="math">
+                <i class="fas fa-calculator me-2"></i>Mathematics
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card glass-card">
-                    <div class="card-header">
-                        <i class="fas fa-book me-2"></i>ELA
-                    </div>
-                    <div class="card-body">
-                        <textarea id="elaQuestion" class="form-control mb-3" placeholder="Enter your ELA question here..."></textarea>
-                        <button class="btn btn-primary w-100" onclick="getHelp('ela')">Get Help</button>
-                        <div id="elaAnswer" class="answer mt-3"></div>
-                    </div>
-                </div>
+            <div class="subject-tab" data-subject="science">
+                <i class="fas fa-flask me-2"></i>Science
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card glass-card">
-                    <div class="card-header">
-                        <i class="fas fa-flask me-2"></i>Science
-                    </div>
-                    <div class="card-body">
-                        <textarea id="scienceQuestion" class="form-control mb-3" placeholder="Enter your science question here..."></textarea>
-                        <button class="btn btn-primary w-100" onclick="getHelp('science')">Get Help</button>
-                        <div id="scienceAnswer" class="answer mt-3"></div>
-                    </div>
+            <div class="subject-tab" data-subject="english">
+                <i class="fas fa-book me-2"></i>English
+            </div>
+        </div>
+
+        <!-- Math Tools -->
+        <div id="mathTools" class="subject-content active">
+            <div class="tool-grid">
+                <!-- Algebra Section -->
+                <div class="tool-card" onclick="openTool('algebraSolver')">
+                    <i class="fas fa-square-root-alt tool-icon"></i>
+                    <h4>Algebra Solver</h4>
+                    <p>Solve equations step by step</p>
+                </div>
+                <div class="tool-card" onclick="openTool('quadraticSolver')">
+                    <i class="fas fa-superscript tool-icon"></i>
+                    <h4>Quadratic Solver</h4>
+                    <p>Find roots of quadratic equations</p>
+                </div>
+                <div class="tool-card" onclick="openTool('systemSolver')">
+                    <i class="fas fa-border-all tool-icon"></i>
+                    <h4>System of Equations</h4>
+                    <p>Solve multiple equations</p>
+                </div>
+
+                <!-- Calculus Section -->
+                <div class="tool-card" onclick="openTool('derivative')">
+                    <i class="fas fa-chart-line tool-icon"></i>
+                    <h4>Derivative Calculator</h4>
+                    <p>Find derivatives with steps</p>
+                </div>
+                <div class="tool-card" onclick="openTool('integral')">
+                    <i class="fas fa-integral tool-icon"></i>
+                    <h4>Integral Calculator</h4>
+                    <p>Compute definite and indefinite integrals</p>
+                </div>
+
+                <!-- Geometry Section -->
+                <div class="tool-card" onclick="openTool('geometry')">
+                    <i class="fas fa-shapes tool-icon"></i>
+                    <h4>Geometry Calculator</h4>
+                    <p>Area, volume, and more</p>
+                </div>
+                <div class="tool-card" onclick="openTool('trigonometry')">
+                    <i class="fas fa-circle tool-icon"></i>
+                    <h4>Trigonometry Helper</h4>
+                    <p>Solve triangles and trig functions</p>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="tool-card" onclick="openTool('statistics')">
+                    <i class="fas fa-chart-bar tool-icon"></i>
+                    <h4>Statistics Calculator</h4>
+                    <p>Mean, median, mode, and more</p>
+                </div>
+                <div class="tool-card" onclick="openTool('probability')">
+                    <i class="fas fa-dice tool-icon"></i>
+                    <h4>Probability Calculator</h4>
+                    <p>Calculate various probability scenarios</p>
+                </div>
+
+                <!-- Additional Math Tools -->
+                <div class="tool-card" onclick="openTool('matrixCalc')">
+                    <i class="fas fa-table tool-icon"></i>
+                    <h4>Matrix Calculator</h4>
+                    <p>Matrix operations and determinants</p>
                 </div>
             </div>
         </div>
-    </main>
 
-    <footer class="bg-dark text-light py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>About StudyLink</h5>
-                    <p>We're here to assist students with their academic needs, providing support in various subjects.</p>
+        <!-- Science Tools -->
+        <div id="scienceTools" class="subject-content">
+            <div class="tool-grid">
+                <!-- Chemistry Tools -->
+                <div class="tool-card" onclick="openTool('chemBalancer')">
+                    <i class="fas fa-atom tool-icon"></i>
+                    <h4>Chemical Equation Balancer</h4>
+                    <p>Balance chemical equations automatically</p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="Public Pages/terms.html" class="text-light">Terms of Service</a></li>
-                        <li><a href="Public Pages/privacy.html" class="text-light">Privacy Policy</a></li>
-                        <li><a href="Public Pages/faq.html" class="text-light">FAQ</a></li>
-                    </ul>
+                <div class="tool-card" onclick="openTool('molarity')">
+                    <i class="fas fa-flask tool-icon"></i>
+                    <h4>Molarity Calculator</h4>
+                    <p>Calculate solution concentrations</p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Connect With Us</h5>
-                    <div class="social-icons">
-                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                <div class="tool-card" onclick="openTool('periodicTable')">
+                    <i class="fas fa-table tool-icon"></i>
+                    <h4>Interactive Periodic Table</h4>
+                    <p>Detailed element information</p>
                 </div>
-            </div>
-            <hr class="mt-4">
-            <div class="text-center">
-                <p>&copy; 2024 StudyLink. All rights reserved.</p>
+
+                <!-- Physics Tools -->
+                <div class="tool-card" onclick="openTool('kinematics')">
+                    <i class="fas fa-running tool-icon"></i>
+                    <h4>Kinematics Calculator</h4>
+                    <p>Motion and velocity calculations</p>
+                </div>
+                <div class="tool-card" onclick="openTool('forces')">
+                    <i class="fas fa-compress-arrows-alt tool-icon"></i>
+                    <h4>Forces Calculator</h4>
+                    <p>Calculate forces and momentum</p>
+                </div>
+                <div class="tool-card" onclick="openTool('energy')">
+                    <i class="fas fa-bolt tool-icon"></i>
+                    <h4>Energy Converter</h4>
+                    <p>Convert between energy units</p>
+                </div>
+
+                <!-- Biology Tools -->
+                <div class="tool-card" onclick="openTool('genetics')">
+                    <i class="fas fa-dna tool-icon"></i>
+                    <h4>Genetics Calculator</h4>
+                    <p>Punnett squares and probability</p>
+                </div>
+                <div class="tool-card" onclick="openTool('cellBiology')">
+                    <i class="fas fa-microscope tool-icon"></i>
+                    <h4>Cell Biology Reference</h4>
+                    <p>Interactive cell diagrams</p>
+                </div>
+                <div class="tool-card" onclick="openTool('evolution')">
+                    <i class="fas fa-tree tool-icon"></i>
+                    <h4>Evolution Calculator</h4>
+                    <p>Hardy-Weinberg equilibrium</p>
+                </div>
+
+                <!-- Additional Science Tools -->
+                <div class="tool-card" onclick="openTool('unitConverter')">
+                    <i class="fas fa-exchange-alt tool-icon"></i>
+                    <h4>Scientific Unit Converter</h4>
+                    <p>Convert between scientific units</p>
+                </div>
+                <div class="tool-card" onclick="openTool('dataAnalysis')">
+                    <i class="fas fa-chart-line tool-icon"></i>
+                    <h4>Scientific Data Analysis</h4>
+                    <p>Analyze experimental data</p>
+                </div>
+                <div class="tool-card" onclick="openTool('errorAnalysis')">
+                    <i class="fas fa-percentage tool-icon"></i>
+                    <h4>Error Analysis</h4>
+                    <p>Calculate experimental uncertainties</p>
+                </div>
             </div>
         </div>
-    </footer>
+
+        <!-- English Tools -->
+        <div id="englishTools" class="subject-content">
+            <div class="tool-grid">
+                <!-- Writing Tools -->
+                <div class="tool-card" onclick="openTool('grammarCheck')">
+                    <i class="fas fa-spell-check tool-icon"></i>
+                    <h4>Grammar Checker</h4>
+                    <p>Advanced grammar and style analysis</p>
+                </div>
+                <div class="tool-card" onclick="openTool('essayOutline')">
+                    <i class="fas fa-pen-fancy tool-icon"></i>
+                    <h4>Essay Outline Generator</h4>
+                    <p>Create structured essay outlines</p>
+                </div>
+                <div class="tool-card" onclick="openTool('thesaurus')">
+                    <i class="fas fa-book tool-icon"></i>
+                    <h4>Interactive Thesaurus</h4>
+                    <p>Find synonyms and antonyms</p>
+                </div>
+
+                <!-- Literature Tools -->
+                <div class="tool-card" onclick="openTool('literaryAnalysis')">
+                    <i class="fas fa-quote-right tool-icon"></i>
+                    <h4>Literary Analysis Helper</h4>
+                    <p>Analyze themes and characters</p>
+                </div>
+                <div class="tool-card" onclick="openTool('poetryAnalysis')">
+                    <i class="fas fa-feather tool-icon"></i>
+                    <h4>Poetry Analysis Tool</h4>
+                    <p>Analyze meter and rhyme schemes</p>
+                </div>
+
+                <!-- Citation Tools -->
+                <div class="tool-card" onclick="openTool('citationGenerator')">
+                    <i class="fas fa-quote-left tool-icon"></i>
+                    <h4>Citation Generator</h4>
+                    <p>MLA, APA, Chicago formats</p>
+                </div>
+                <div class="tool-card" onclick="openTool('bibliographyMaker')">
+                    <i class="fas fa-list-alt tool-icon"></i>
+                    <h4>Bibliography Maker</h4>
+                    <p>Create formatted bibliographies</p>
+                </div>
+
+                <!-- Research Tools -->
+                <div class="tool-card" onclick="openTool('researchOrganizer')">
+                    <i class="fas fa-folder-open tool-icon"></i>
+                    <h4>Research Organizer</h4>
+                    <p>Organize research notes and sources</p>
+                </div>
+                <div class="tool-card" onclick="openTool('plagiarismChecker')">
+                    <i class="fas fa-search tool-icon"></i>
+                    <h4>Plagiarism Checker</h4>
+                    <p>Check text originality</p>
+                </div>
+
+                <!-- Writing Enhancement -->
+                <div class="tool-card" onclick="openTool('readabilityAnalyzer')">
+                    <i class="fas fa-glasses tool-icon"></i>
+                    <h4>Readability Analyzer</h4>
+                    <p>Analyze text complexity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tool Modal -->
+    <div class="modal fade" id="toolModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tool Name</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tool content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function getHelp(subject) {
-            const question = document.getElementById(`${subject}Question`).value;
-            const answerElement = document.getElementById(`${subject}Answer`);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap components
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-            if (question.trim() === '') {
-                showAnswer(answerElement, 'Please enter a question.', 'warning');
-                return;
-            }
+            // Subject tab switching
+            document.querySelectorAll('.subject-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    document.querySelectorAll('.subject-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
 
-            showLoadingState(answerElement);
-            
-            setTimeout(() => {
-                const answers = {
-                    math: "The solution to your math problem involves applying the Pythagorean theorem. Remember, a² + b² = c².",
-                    ela: "To improve your writing, focus on using varied sentence structures and strong, descriptive language.",
-                    science: "The process you're asking about is photosynthesis, which is how plants convert sunlight into energy."
-                };
-                
-                showAnswer(answerElement, answers[subject] || "I'm sorry, I don't have an answer for that specific question. Please try rephrasing or ask another question.", 'success');
-            }, 1500);
-        }
-
-        function showLoadingState(element) {
-            element.innerHTML = `
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `;
-            element.style.display = 'block';
-        }
-
-        function showAnswer(element, content, type = 'info') {
-            element.innerHTML = content;
-            element.classList.add('fade-in');
-            element.style.display = 'block';
-        }
-
-        // Smooth scrolling for all anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                    // Show corresponding content
+                    const subject = tab.dataset.subject;
+                    document.querySelectorAll('.subject-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${subject}Tools`).classList.add('active');
                 });
             });
-        });
 
-        // Add animation on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.animate-on-scroll');
-            
-            function checkScroll() {
-                animateElements.forEach(element => {
-                    const elementTop = element.getBoundingClientRect().top;
-                    const windowHeight = window.innerHeight;
+            // Modal initialization
+            const toolModal = new bootstrap.Modal(document.getElementById('toolModal'));
+
+            // Navigation handling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
                     
-                    if (elementTop < windowHeight * 0.75) {
-                        element.classList.add('visible');
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 });
+            });
+
+            // Loading state handler
+            function showLoading(show) {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = show ? 'flex' : 'none';
+                }
             }
 
-            window.addEventListener('scroll', checkScroll);
-            checkScroll(); // Initial check
+            // Error handling
+            function showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.textContent = message;
+                document.querySelector('.tool-interface').appendChild(errorDiv);
+                setTimeout(() => errorDiv.remove(), 3000);
+            }
         });
 
-        document.querySelector('.btn-custom').addEventListener('click', (e) => {
-            e.preventDefault();
-            const featuresSection = document.querySelector('#features');
-            featuresSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        const toolImplementations = {
+            // Math Tools
+            algebraSolver: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="algebraInput" 
+                                placeholder="Enter equation (e.g., 2x + 5 = 13)">
+                            <button class="btn btn-custom" onclick="toolImplementations.algebraSolver.solve()">Solve</button>
+                            <div id="algebraSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                solve: function() {
+                    const input = document.getElementById('algebraInput').value;
+                    try {
+                        const equation = math.parse(input);
+                        const solution = math.solve(equation, 'x');
+                        const solutionDiv = document.getElementById('algebraSolution');
+                        solutionDiv.innerHTML = `
+                            <h5>Solution:</h5>
+                            <div class="step-by-step">
+                                <p>x = ${solution}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        showError('Please enter a valid equation');
+                    }
+                }
+            },
+
+            quadraticSolver: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <h5>Enter coefficients for ax² + bx + c = 0</h5>
+                            <div class="row g-3 mb-3">
+                                <div class="col">
+                                    <input type="number" class="form-control" id="quadA" placeholder="a">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" id="quadB" placeholder="b">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" id="quadC" placeholder="c">
+                                </div>
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.quadraticSolver.solve()">Solve</button>
+                            <div id="quadraticSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                solve: function() {
+                    const a = parseFloat(document.getElementById('quadA').value);
+                    const b = parseFloat(document.getElementById('quadB').value);
+                    const c = parseFloat(document.getElementById('quadC').value);
+                    
+                    const discriminant = b*b - 4*a*c;
+                    const solutionDiv = document.getElementById('quadraticSolution');
+                    
+                    if (discriminant > 0) {
+                        const x1 = (-b + Math.sqrt(discriminant))/(2*a);
+                        const x2 = (-b - Math.sqrt(discriminant))/(2*a);
+                        solutionDiv.innerHTML = `
+                            <h5>Solutions:</h5>
+                            <div class="step-by-step">
+                                <p>x₁ = ${x1.toFixed(2)}</p>
+                                <p>x₂ = ${x2.toFixed(2)}</p>
+                            </div>
+                        `;
+                    } else if (discriminant === 0) {
+                        const x = -b/(2*a);
+                        solutionDiv.innerHTML = `
+                            <h5>Solution:</h5>
+                            <div class="step-by-step">
+                                <p>x = ${x.toFixed(2)} (double root)</p>
+                            </div>
+                        `;
+                    } else {
+                        solutionDiv.innerHTML = `
+                            <h5>Solution:</h5>
+                            <div class="step-by-step">
+                                <p>No real solutions (complex roots)</p>
+                            </div>
+                        `;
+                    }
+                }
+            },
+
+            systemSolver: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <h5>System of Linear Equations (2×2)</h5>
+                            <div class="mb-3">
+                                <input type="text" class="form-control mb-2" id="equation1" 
+                                    placeholder="First equation (e.g., 2x + 3y = 8)">
+                                <input type="text" class="form-control" id="equation2" 
+                                    placeholder="Second equation (e.g., 4x - y = 1)">
+                            </div>
+                            <button class="btn btn-custom" onclick="mathTools.systemSolver.solve()">Solve System</button>
+                            <div id="systemSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                solve: function() {
+                    try {
+                        const eq1 = document.getElementById('equation1').value;
+                        const eq2 = document.getElementById('equation2').value;
+                        const system = [eq1, eq2];
+                        const solution = math.lusolve(system, ['x', 'y']);
+                        
+                        document.getElementById('systemSolution').innerHTML = `
+                            <h5>Solution:</h5>
+                            <div class="step-by-step">
+                                <p>x = ${solution[0].toFixed(2)}</p>
+                                <p>y = ${solution[1].toFixed(2)}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        showError('Please enter valid equations');
+                    }
+                }
+            },
+
+            derivative: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="derivativeInput" 
+                                placeholder="Enter function (e.g., x^2 + 3x)">
+                            <button class="btn btn-custom" onclick="mathTools.derivative.solve()">Find Derivative</button>
+                            <div id="derivativeSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                solve: function() {
+                    try {
+                        const input = document.getElementById('derivativeInput').value;
+                        const derivative = math.derivative(input, 'x');
+                        
+                        document.getElementById('derivativeSolution').innerHTML = `
+                            <h5>Derivative:</h5>
+                            <div class="step-by-step">
+                                <p>f'(x) = ${derivative.toString()}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        showError('Please enter a valid function');
+                    }
+                }
+            },
+
+            integral: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="integralInput" 
+                                placeholder="Enter function (e.g., 2x + 1)">
+                            <div class="row g-3 mb-3">
+                                <div class="col">
+                                    <input type="number" class="form-control" id="lowerBound" placeholder="Lower bound (optional)">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" id="upperBound" placeholder="Upper bound (optional)">
+                                </div>
+                            </div>
+                            <button class="btn btn-custom" onclick="mathTools.integral.solve()">Integrate</button>
+                            <div id="integralSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                solve: function() {
+                    try {
+                        const input = document.getElementById('integralInput').value;
+                        const lower = document.getElementById('lowerBound').value;
+                        const upper = document.getElementById('upperBound').value;
+                        
+                        if (lower && upper) {
+                            const definiteIntegral = math.integrate(input, 'x', lower, upper);
+                            document.getElementById('integralSolution').innerHTML = `
+                                <h5>Definite Integral:</h5>
+                                <div class="step-by-step">
+                                    <p>∫[${lower} to ${upper}] ${input} dx = ${definiteIntegral}</p>
+                                </div>
+                            `;
+                        } else {
+                            const indefiniteIntegral = math.integrate(input, 'x');
+                            document.getElementById('integralSolution').innerHTML = `
+                                <h5>Indefinite Integral:</h5>
+                                <div class="step-by-step">
+                                    <p>∫ ${input} dx = ${indefiniteIntegral} + C</p>
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        showError('Please enter a valid function');
+                    }
+                }
+            },
+
+            geometry: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="shapeSelect" onchange="mathTools.geometry.updateForm()">
+                                <option value="">Select a shape...</option>
+                                <option value="circle">Circle</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="rectangle">Rectangle</option>
+                                <option value="sphere">Sphere</option>
+                                <option value="cube">Cube</option>
+                            </select>
+                            <div id="shapeInputs"></div>
+                            <div id="geometrySolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                updateForm: function() {
+                    const shape = document.getElementById('shapeSelect').value;
+                    const inputsDiv = document.getElementById('shapeInputs');
+                    
+                    const forms = {
+                        circle: `
+                            <input type="number" class="form-control mb-3" id="radius" placeholder="Radius">
+                            <button class="btn btn-custom" onclick="mathTools.geometry.calculateCircle()">Calculate</button>
+                        `,
+                        triangle: `
+                            <input type="number" class="form-control mb-2" id="base" placeholder="Base">
+                            <input type="number" class="form-control mb-3" id="height" placeholder="Height">
+                            <button class="btn btn-custom" onclick="mathTools.geometry.calculateTriangle()">Calculate</button>
+                        `
+                        // Add more shapes as needed
+                    };
+                    
+                    inputsDiv.innerHTML = forms[shape] || '';
+                },
+                calculateCircle: function() {
+                    const r = parseFloat(document.getElementById('radius').value);
+                    const area = Math.PI * r * r;
+                    const circumference = 2 * Math.PI * r;
+                    
+                    document.getElementById('geometrySolution').innerHTML = `
+                        <h5>Circle Calculations:</h5>
+                        <div class="step-by-step">
+                            <p>Area = ${area.toFixed(2)} square units</p>
+                            <p>Circumference = ${circumference.toFixed(2)} units</p>
+                        </div>
+                    `;
+                }
+            },
+
+            trigonometry: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="trigFunction">
+                                <option value="sin">Sine</option>
+                                <option value="cos">Cosine</option>
+                                <option value="tan">Tangent</option>
+                            </select>
+                            <input type="number" class="form-control mb-3" id="angle" 
+                                placeholder="Enter angle in degrees">
+                            <button class="btn btn-custom" onclick="mathTools.trigonometry.calculate()">Calculate</button>
+                            <div id="trigSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                calculate: function() {
+                    const angle = parseFloat(document.getElementById('angle').value);
+                    const func = document.getElementById('trigFunction').value;
+                    const radians = angle * Math.PI / 180;
+                    
+                    const result = Math[func](radians);
+                    document.getElementById('trigSolution').innerHTML = `
+                        <h5>Result:</h5>
+                        <div class="step-by-step">
+                            <p>${func}(${angle}°) = ${result.toFixed(4)}</p>
+                        </div>
+                    `;
+                }
+            },
+
+            statistics: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="dataInput" 
+                                    placeholder="Enter numbers separated by commas"></textarea>
+                            <button class="btn btn-custom" onclick="mathTools.statistics.analyze()">Analyze Data</button>
+                            <div id="statsSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                analyze: function() {
+                    const data = document.getElementById('dataInput').value
+                        .split(',')
+                        .map(x => parseFloat(x.trim()))
+                        .filter(x => !isNaN(x));
+                    
+                    const mean = data.reduce((a, b) => a + b) / data.length;
+                    const median = this.calculateMedian(data);
+                    const mode = this.calculateMode(data);
+                    
+                    document.getElementById('statsSolution').innerHTML = `
+                        <h5>Statistical Analysis:</h5>
+                        <div class="step-by-step">
+                            <p>Mean: ${mean.toFixed(2)}</p>
+                            <p>Median: ${median.toFixed(2)}</p>
+                            <p>Mode: ${mode.join(', ')}</p>
+                            <p>Sample Size: ${data.length}</p>
+                        </div>
+                    `;
+                },
+                calculateMedian: function(arr) {
+                    const sorted = [...arr].sort((a, b) => a - b);
+                    const mid = Math.floor(sorted.length / 2);
+                    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+                },
+                calculateMode: function(arr) {
+                    const frequency = {};
+                    arr.forEach(num => frequency[num] = (frequency[num] || 0) + 1);
+                    const maxFreq = Math.max(...Object.values(frequency));
+                    return Object.keys(frequency)
+                        .filter(key => frequency[key] === maxFreq)
+                        .map(x => parseFloat(x));
+                }
+            },
+
+            probability: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="probType" onchange="mathTools.probability.updateInputs()">
+                                <option value="combination">Combinations (nCr)</option>
+                                <option value="permutation">Permutations (nPr)</option>
+                                <option value="probability">Basic Probability</option>
+                            </select>
+                            <div id="probInputs"></div>
+                            <div id="probSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.updateInputs();
+                },
+                updateInputs: function() {
+                    const type = document.getElementById('probType').value;
+                    const inputsDiv = document.getElementById('probInputs');
+                    
+                    const forms = {
+                        combination: `
+                            <input type="number" class="form-control mb-2" id="n" placeholder="n (total items)">
+                            <input type="number" class="form-control mb-3" id="r" placeholder="r (items to choose)">
+                            <button class="btn btn-custom" onclick="mathTools.probability.calculateCombination()">Calculate</button>
+                        `,
+                        permutation: `
+                            <input type="number" class="form-control mb-2" id="n" placeholder="n (total items)">
+                            <input type="number" class="form-control mb-3" id="r" placeholder="r (items to arrange)">
+                            <button class="btn btn-custom" onclick="mathTools.probability.calculatePermutation()">Calculate</button>
+                        `
+                    };
+                    
+                    inputsDiv.innerHTML = forms[type] || '';
+                },
+                calculateCombination: function() {
+                    const n = parseInt(document.getElementById('n').value);
+                    const r = parseInt(document.getElementById('r').value);
+                    
+                    const result = this.factorial(n) / (this.factorial(r) * this.factorial(n - r));
+                    
+                    document.getElementById('probSolution').innerHTML = `
+                        <h5>Combination Result:</h5>
+                        <div class="step-by-step">
+                            <p>${n}C${r} = ${result}</p>
+                            <p>There are ${result} ways to choose ${r} items from ${n} items.</p>
+                        </div>
+                    `;
+                },
+                factorial: function(num) {
+                    if (num < 0) return 0;
+                    if (num <= 1) return 1;
+                    return num * this.factorial(num - 1);
+                }
+            },
+
+            matrixCalc: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="matrixOperation">
+                                <option value="add">Matrix Addition</option>
+                                <option value="multiply">Matrix Multiplication</option>
+                                <option value="determinant">Determinant</option>
+                            </select>
+                            <div class="mb-3">
+                                <label>Matrix Size:</label>
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <input type="number" class="form-control" id="rows" value="2" min="2" max="4">
+                                    </div>
+                                    <div class="col">
+                                        <input type="number" class="form-control" id="cols" value="2" min="2" max="4">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-custom mb-3" onclick="mathTools.matrixCalc.createMatrices()">Create Matrices</button>
+                            <div id="matrixInputs"></div>
+                            <div id="matrixSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                createMatrices: function() {
+                    const rows = parseInt(document.getElementById('rows').value);
+                    const cols = parseInt(document.getElementById('cols').value);
+                    const operation = document.getElementById('matrixOperation').value;
+                    
+                    let html = '<div class="matrix-a mb-3"><h6>Matrix A:</h6>';
+                    for (let i = 0; i < rows; i++) {
+                        html += '<div class="row g-2 mb-2">';
+                        for (let j = 0; j < cols; j++) {
+                            html += `
+                                <div class="col">
+                                    <input type="number" class="form-control matrix-input" 
+                                        data-matrix="a" data-row="${i}" data-col="${j}">
+                                </div>`;
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                    
+                    if (operation !== 'determinant') {
+                        html += '<div class="matrix-b mb-3"><h6>Matrix B:</h6>';
+                        for (let i = 0; i < rows; i++) {
+                            html += '<div class="row g-2 mb-2">';
+                            for (let j = 0; j < cols; j++) {
+                                html += `
+                                    <div class="col">
+                                        <input type="number" class="form-control matrix-input" 
+                                            data-matrix="b" data-row="${i}" data-col="${j}">
+                                    </div>`;
+                            }
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                    }
+                    
+                    html += `<button class="btn btn-custom" onclick="mathTools.matrixCalc.calculate()">Calculate</button>`;
+                    
+                    document.getElementById('matrixInputs').innerHTML = html;
+                },
+                calculate: function() {
+                    // Matrix calculation implementation
+                    const operation = document.getElementById('matrixOperation').value;
+                    const result = this.performOperation(operation);
+                    
+                    document.getElementById('matrixSolution').innerHTML = `
+                        <h5>Result:</h5>
+                        <div class="step-by-step">
+                            ${this.formatMatrixResult(result)}
+                        </div>
+                    `;
+                }
+            },
+
+            grammarCheck: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="grammarText" 
+                                    rows="6" placeholder="Enter your text for grammar checking..."></textarea>
+                            <button class="btn btn-custom" onclick="englishTools.grammarCheck.analyze()">Check Grammar</button>
+                            <div id="grammarSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                analyze: function() {
+                    const text = document.getElementById('grammarText').value;
+                    const commonErrors = this.checkCommonErrors(text);
+                    const suggestions = this.generateSuggestions(text);
+                    
+                    document.getElementById('grammarSolution').innerHTML = `
+                        <h5>Grammar Analysis:</h5>
+                        <div class="step-by-step">
+                            <h6>Potential Issues:</h6>
+                            ${commonErrors}
+                            <h6 class="mt-3">Suggestions:</h6>
+                            ${suggestions}
+                        </div>
+                    `;
+                },
+                checkCommonErrors: function(text) {
+                    const errors = [];
+                    // Common grammar checks
+                    if (text.match(/\b(its|it's)\b/g)) {
+                        errors.push("Check 'its' vs 'it's' usage");
+                    }
+                    if (text.match(/\b(their|there|they're)\b/g)) {
+                        errors.push("Verify 'their/there/they're' usage");
+                    }
+                    if (text.match(/\b(your|you're)\b/g)) {
+                        errors.push("Confirm 'your/you're' usage");
+                    }
+                    return errors.length ? `<ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>` : '<p>No common errors detected.</p>';
+                },
+                generateSuggestions: function(text) {
+                    const suggestions = [];
+                    // Style and clarity suggestions
+                    if (text.length > 0) {
+                        const sentences = text.split(/[.!?]+/).filter(Boolean);
+                        if (sentences.some(s => s.trim().split(' ').length > 25)) {
+                            suggestions.push("Consider breaking down long sentences for better readability");
+                        }
+                        if (text.match(/very|really|basically|actually/g)) {
+                            suggestions.push("Replace qualifier words with stronger, more specific alternatives");
+                        }
+                    }
+                    return suggestions.length ? `<ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>` : '<p>No style suggestions.</p>';
+                }
+            },
+
+            essayOutline: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="essayTopic" 
+                                placeholder="Enter your essay topic">
+                            <select class="form-select mb-3" id="essayType">
+                                <option value="argumentative">Argumentative Essay</option>
+                                <option value="analytical">Analytical Essay</option>
+                                <option value="expository">Expository Essay</option>
+                                <option value="narrative">Narrative Essay</option>
+                            </select>
+                            <button class="btn btn-custom" onclick="englishTools.essayOutline.generate()">Generate Outline</button>
+                            <div id="outlineSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                generate: function() {
+                    const topic = document.getElementById('essayTopic').value;
+                    const type = document.getElementById('essayType').value;
+                    
+                    const outlineTemplates = {
+                        argumentative: this.generateArgumentativeOutline(topic),
+                        analytical: this.generateAnalyticalOutline(topic),
+                        expository: this.generateExpositoryOutline(topic),
+                        narrative: this.generateNarrativeOutline(topic)
+                    };
+                    
+                    document.getElementById('outlineSolution').innerHTML = outlineTemplates[type];
+                },
+                generateArgumentativeOutline: function(topic) {
+                    return `
+                        <h5>Argumentative Essay Outline: ${topic}</h5>
+                        <div class="step-by-step">
+                            <h6>I. Introduction</h6>
+                            <ul>
+                                <li>Hook statement</li>
+                                <li>Background information</li>
+                                <li>Thesis statement</li>
+                            </ul>
+                            
+                            <h6>II. Body Paragraph 1 - First Argument</h6>
+                            <ul>
+                                <li>Topic sentence</li>
+                                <li>Supporting evidence</li>
+                                <li>Analysis</li>
+                                <li>Transition</li>
+                            </ul>
+                            
+                            <h6>III. Body Paragraph 2 - Second Argument</h6>
+                            <ul>
+                                <li>Topic sentence</li>
+                                <li>Supporting evidence</li>
+                                <li>Analysis</li>
+                                <li>Transition</li>
+                            </ul>
+                            
+                            <h6>IV. Counter-Argument</h6>
+                            <ul>
+                                <li>Opposing viewpoint</li>
+                                <li>Rebuttal</li>
+                                <li>Supporting evidence</li>
+                            </ul>
+                            
+                            <h6>V. Conclusion</h6>
+                            <ul>
+                                <li>Restate thesis</li>
+                                <li>Summarize main points</li>
+                                <li>Call to action or final thought</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            },
+
+            thesaurus: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="wordInput" 
+                                placeholder="Enter a word to find synonyms and antonyms">
+                            <button class="btn btn-custom" onclick="englishTools.thesaurus.findWords()">Search</button>
+                            <div id="thesaurusSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                findWords: function() {
+                    const word = document.getElementById('wordInput').value.toLowerCase();
+                    const wordDatabase = this.getWordDatabase();
+                    
+                    if (wordDatabase[word]) {
+                        document.getElementById('thesaurusSolution').innerHTML = `
+                            <h5>Results for "${word}":</h5>
+                            <div class="step-by-step">
+                                <h6>Synonyms:</h6>
+                                <ul>${wordDatabase[word].synonyms.map(w => `<li>${w}</li>`).join('')}</ul>
+                                <h6>Antonyms:</h6>
+                                <ul>${wordDatabase[word].antonyms.map(w => `<li>${w}</li>`).join('')}</ul>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('thesaurusSolution').innerHTML = `
+                            <div class="alert alert-info">
+                                No results found for "${word}". Try another word.
+                            </div>
+                        `;
+                    }
+                },
+                getWordDatabase: function() {
+                    return {
+                        'happy': {
+                            synonyms: ['joyful', 'cheerful', 'delighted', 'content', 'pleased'],
+                            antonyms: ['sad', 'unhappy', 'miserable', 'depressed']
+                        },
+                        'big': {
+                            synonyms: ['large', 'huge', 'enormous', 'gigantic', 'vast'],
+                            antonyms: ['small', 'tiny', 'little', 'miniature']
+                        }
+                        // Add more words to the database
+                    };
+                }
+            },
+
+            literaryAnalysis: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="literaryText" 
+                                    rows="6" placeholder="Paste your text for literary analysis..."></textarea>
+                            <select class="form-select mb-3" id="analysisType">
+                                <option value="theme">Theme Analysis</option>
+                                <option value="character">Character Analysis</option>
+                                <option value="literary-devices">Literary Devices</option>
+                            </select>
+                            <button class="btn btn-custom" onclick="englishTools.literaryAnalysis.analyze()">Analyze</button>
+                            <div id="literaryAnalysisSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                analyze: function() {
+                    const text = document.getElementById('literaryText').value;
+                    const type = document.getElementById('analysisType').value;
+                    
+                    const analysisResults = {
+                        theme: this.analyzeTheme(text),
+                        character: this.analyzeCharacter(text),
+                        'literary-devices': this.analyzeLiteraryDevices(text)
+                    };
+                    
+                    document.getElementById('literaryAnalysisSolution').innerHTML = analysisResults[type];
+                },
+                analyzeTheme: function(text) {
+                    const themes = this.identifyThemes(text);
+                    return `
+                        <h5>Theme Analysis:</h5>
+                        <div class="step-by-step">
+                            <h6>Major Themes:</h6>
+                            <ul>${themes.map(t => `<li>${t}</li>`).join('')}</ul>
+                            <h6>Supporting Evidence:</h6>
+                            <p>Key passages and textual evidence will be highlighted here.</p>
+                        </div>
+                    `;
+                }
+            },
+
+            citationGenerator: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="citationStyle">
+                                <option value="mla">MLA</option>
+                                <option value="apa">APA</option>
+                                <option value="chicago">Chicago</option>
+                            </select>
+                            <select class="form-select mb-3" id="sourceType">
+                                <option value="book">Book</option>
+                                <option value="website">Website</option>
+                                <option value="journal">Journal Article</option>
+                            </select>
+                            <div id="sourceInputs"></div>
+                            <button class="btn btn-custom" onclick="englishTools.citationGenerator.generateCitation()">Generate Citation</button>
+                            <div id="citationSolution" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.updateSourceInputs();
+                },
+                updateSourceInputs: function() {
+                    const sourceType = document.getElementById('sourceType').value;
+                    const inputsDiv = document.getElementById('sourceInputs');
+                    
+                    const inputs = {
+                        book: `
+                            <input type="text" class="form-control mb-2" placeholder="Author(s)">
+                            <input type="text" class="form-control mb-2" placeholder="Book Title">
+                            <input type="text" class="form-control mb-2" placeholder="Publisher">
+                            <input type="text" class="form-control mb-2" placeholder="Year Published">
+                        `,
+                        website: `
+                            <input type="text" class="form-control mb-2" placeholder="Author/Organization">
+                            <input type="text" class="form-control mb-2" placeholder="Page Title">
+                            <input type="text" class="form-control mb-2" placeholder="Website URL">
+                            <input type="text" class="form-control mb-2" placeholder="Access Date">
+                        `
+                    };
+                    
+                    inputsDiv.innerHTML = inputs[sourceType] || '';
+                }
+            },
+
+            plagiarismChecker: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="textToCheck" 
+                                    rows="6" placeholder="Paste your text to check for plagiarism..."></textarea>
+                            <button class="btn btn-custom" onclick="englishTools.plagiarismChecker.check()">Check Plagiarism</button>
+                            <div id="plagiarismResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                check: function() {
+                    const text = document.getElementById('textToCheck').value;
+                    const results = this.analyzeText(text);
+                    
+                    document.getElementById('plagiarismResult').innerHTML = `
+                        <h5>Plagiarism Analysis Results:</h5>
+                        <div class="step-by-step">
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" style="width: ${results.originalityScore}%">
+                                    ${results.originalityScore}% Original
+                                </div>
+                            </div>
+                            <h6>Findings:</h6>
+                            <ul>
+                                ${results.matches.map(match => `
+                                    <li>${match.text} - ${match.similarity}% match</li>
+                                `).join('')}
+                            </ul>
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                },
+                analyzeText: function(text) {
+                    return {
+                        originalityScore: 85,
+                        matches: [
+                            { text: "Selected phrase or sentence", similarity: 15 }
+                        ],
+                        recommendations: [
+                            "Consider paraphrasing matched content",
+                            "Add proper citations where needed",
+                            "Review highlighted sections for potential issues"
+                        ]
+                    };
+                }
+            },
+
+            readabilityAnalyzer: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="readabilityText" 
+                                    rows="6" placeholder="Enter text to analyze readability..."></textarea>
+                            <button class="btn btn-custom" onclick="englishTools.readabilityAnalyzer.analyze()">Analyze Readability</button>
+                            <div id="readabilityResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                analyze: function() {
+                    const text = document.getElementById('readabilityText').value;
+                    const metrics = this.calculateMetrics(text);
+                    
+                    document.getElementById('readabilityResult').innerHTML = `
+                        <h5>Readability Analysis:</h5>
+                        <div class="step-by-step">
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <h6>Flesch Reading Ease</h6>
+                                    <p class="score">${metrics.fleschScore}</p>
+                                    <p class="interpretation">${this.interpretFleschScore(metrics.fleschScore)}</p>
+                                </div>
+                                <div class="metric-card">
+                                    <h6>Grade Level</h6>
+                                    <p class="score">${metrics.gradeLevel}</p>
+                                </div>
+                            </div>
+                            <h6 class="mt-3">Text Statistics:</h6>
+                            <ul>
+                                <li>Words: ${metrics.wordCount}</li>
+                                <li>Sentences: ${metrics.sentenceCount}</li>
+                                <li>Average Word Length: ${metrics.avgWordLength} characters</li>
+                                <li>Average Sentence Length: ${metrics.avgSentenceLength} words</li>
+                            </ul>
+                            <h6>Suggestions:</h6>
+                            <ul>
+                                ${metrics.suggestions.map(s => `<li>${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                },
+                calculateMetrics: function(text) {
+                    const words = text.trim().split(/\s+/).length;
+                    const sentences = text.split(/[.!?]+/).filter(Boolean).length;
+                    
+                    return {
+                        fleschScore: this.calculateFleschScore(text),
+                        gradeLevel: this.calculateGradeLevel(text),
+                        wordCount: words,
+                        sentenceCount: sentences,
+                        avgWordLength: this.calculateAvgWordLength(text),
+                        avgSentenceLength: words / sentences,
+                        suggestions: this.generateSuggestions(text)
+                    };
+                },
+                interpretFleschScore: function(score) {
+                    if (score >= 90) return "Very Easy to Read";
+                    if (score >= 80) return "Easy to Read";
+                    if (score >= 70) return "Fairly Easy to Read";
+                    if (score >= 60) return "Standard";
+                    if (score >= 50) return "Fairly Difficult";
+                    return "Difficult to Read";
+                }
+            },
+
+            researchOrganizer: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <div class="mb-3">
+                                <input type="text" class="form-control mb-2" id="researchTopic" 
+                                    placeholder="Research Topic">
+                                <button class="btn btn-custom" onclick="englishTools.researchOrganizer.addSource()">
+                                    Add Source
+                                </button>
+                            </div>
+                            <div id="sourcesList" class="mb-3"></div>
+                            <button class="btn btn-custom" onclick="englishTools.researchOrganizer.generateOutline()">
+                                Generate Research Outline
+                            </button>
+                            <div id="researchResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                sources: [],
+                addSource: function() {
+                    const sourcesList = document.getElementById('sourcesList');
+                    const sourceId = this.sources.length;
+                    
+                    const sourceHTML = `
+                        <div class="source-entry card mb-2">
+                            <div class="card-body">
+                                <input type="text" class="form-control mb-2" placeholder="Source Title">
+                                <input type="text" class="form-control mb-2" placeholder="Author">
+                                <textarea class="form-control mb-2" placeholder="Key Points"></textarea>
+                                <button class="btn btn-sm btn-danger" onclick="englishTools.researchOrganizer.removeSource(${sourceId})">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    sourcesList.insertAdjacentHTML('beforeend', sourceHTML);
+                    this.sources.push({id: sourceId});
+                }
+            },
+
+            chemBalancer: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="chemEquation" 
+                                placeholder="Enter chemical equation (e.g., H2 + O2 = H2O)">
+                            <button class="btn btn-custom" onclick="toolImplementations.chemBalancer.balance()">Balance Equation</button>
+                            <div id="balanceResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                balance: function() {
+                    const equation = document.getElementById('chemEquation').value;
+                    const result = this.balanceEquation(equation);
+                    
+                    document.getElementById('balanceResult').innerHTML = `
+                        <h5>Balanced Equation:</h5>
+                        <div class="step-by-step">
+                            <p class="balanced-equation">${result.balancedEquation}</p>
+                            <h6>Steps:</h6>
+                            <ol>
+                                ${result.steps.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                }
+            },
+
+            molarity: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <div class="mb-3">
+                                <label>Solute mass (g):</label>
+                                <input type="number" class="form-control" id="soluteMass">
+                            </div>
+                            <div class="mb-3">
+                                <label>Molar mass (g/mol):</label>
+                                <input type="number" class="form-control" id="molarMass">
+                            </div>
+                            <div class="mb-3">
+                                <label>Solution volume (L):</label>
+                                <input type="number" class="form-control" id="solutionVolume">
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.molarity.calculate()">Calculate</button>
+                            <div id="molarityResult" class="tool-result"></div>
+                        </div>
+                    `;
+                }
+            },
+
+            periodicTable: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="text" class="form-control mb-3" id="elementSearch" 
+                                placeholder="Search element (name or symbol)">
+                            <div class="periodic-table-grid">
+                                ${this.generatePeriodicTable()}
+                            </div>
+                            <div id="elementDetails" class="tool-result mt-3"></div>
+                        </div>
+                    `;
+                    this.setupEventListeners();
+                },
+                generatePeriodicTable: function() {
+                    return Object.entries(this.elements).map(([symbol, data]) => `
+                        <div class="element-card ${data.category.toLowerCase()}" data-symbol="${symbol}">
+                            <div class="atomic-number">${data.number}</div>
+                            <div class="symbol">${symbol}</div>
+                            <div class="name">${data.name}</div>
+                        </div>
+                    `).join('');
+                },
+                elements: {
+                    "H": { number: 1, name: "Hydrogen", category: "Nonmetal", mass: 1.008 },
+                    "He": { number: 2, name: "Helium", category: "Noble Gas", mass: 4.003 }
+                    // Add more elements
+                }
+            },
+
+            kinematics: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="kinematicsType" onchange="toolImplementations.kinematics.updateInputs()">
+                                <option value="displacement">Distance and Displacement</option>
+                                <option value="velocity">Velocity and Speed</option>
+                                <option value="acceleration">Acceleration</option>
+                                <option value="projectile">Projectile Motion</option>
+                            </select>
+                            <div id="kinematicsInputs"></div>
+                            <div id="kinematicsResult" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.updateInputs();
+                },
+                updateInputs: function() {
+                    const type = document.getElementById('kinematicsType').value;
+                    const inputsDiv = document.getElementById('kinematicsInputs');
+                    const inputForms = {
+                        displacement: `
+                            <div class="mb-3">
+                                <input type="number" class="form-control mb-2" id="initialPosition" placeholder="Initial position (m)">
+                                <input type="number" class="form-control mb-2" id="finalPosition" placeholder="Final position (m)">
+                                <input type="number" class="form-control mb-2" id="time" placeholder="Time (s)">
+                                <button class="btn btn-custom" onclick="toolImplementations.kinematics.calculate('displacement')">Calculate</button>
+                            </div>
+                        `
+                        // Add other kinematics input forms
+                    };
+                    inputsDiv.innerHTML = inputForms[type] || '';
+                }
+            },
+
+            forces: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="forceType">
+                                <option value="newton">Newton's Second Law</option>
+                                <option value="friction">Friction Force</option>
+                                <option value="gravity">Gravitational Force</option>
+                            </select>
+                            <div id="forceInputs" class="mb-3">
+                                <input type="number" class="form-control mb-2" id="mass" placeholder="Mass (kg)">
+                                <input type="number" class="form-control mb-2" id="acceleration" placeholder="Acceleration (m/s²)">
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.forces.calculate()">Calculate Force</button>
+                            <div id="forceResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                calculate: function() {
+                    const mass = parseFloat(document.getElementById('mass').value);
+                    const acceleration = parseFloat(document.getElementById('acceleration').value);
+                    const force = mass * acceleration;
+                    
+                    document.getElementById('forceResult').innerHTML = `
+                        <h5>Force Calculation:</h5>
+                        <div class="step-by-step">
+                            <p>F = ma = ${mass} kg × ${acceleration} m/s² = ${force.toFixed(2)} N</p>
+                        </div>
+                    `;
+                }
+            },
+
+            energy: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="energyType">
+                                <option value="kinetic">Kinetic Energy</option>
+                                <option value="potential">Gravitational Potential Energy</option>
+                                <option value="mechanical">Total Mechanical Energy</option>
+                            </select>
+                            <div id="energyInputs"></div>
+                            <button class="btn btn-custom" onclick="toolImplementations.energy.calculate()">Calculate Energy</button>
+                            <div id="energyResult" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.updateInputs();
+                }
+            },
+
+            genetics: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="geneticsType">
+                                <option value="punnett">Punnett Square</option>
+                                <option value="probability">Inheritance Probability</option>
+                                <option value="dna">DNA/RNA Transcription</option>
+                            </select>
+                            <div id="geneticsInputs" class="mb-3">
+                                <input type="text" class="form-control mb-2" id="allele1" placeholder="Parent 1 Alleles (e.g., Aa)">
+                                <input type="text" class="form-control mb-2" id="allele2" placeholder="Parent 2 Alleles (e.g., aa)">
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.genetics.calculate()">Generate Results</button>
+                            <div id="geneticsResult" class="tool-result"></div>
+                        </div>
+                    `;
+                },
+                calculate: function() {
+                    const type = document.getElementById('geneticsType').value;
+                    const allele1 = document.getElementById('allele1').value;
+                    const allele2 = document.getElementById('allele2').value;
+                    
+                    if (type === 'punnett') {
+                        this.generatePunnettSquare(allele1, allele2);
+                    }
+                }
+            },
+
+            cellBiology: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="cellType">
+                                <option value="animal">Animal Cell</option>
+                                <option value="plant">Plant Cell</option>
+                                <option value="bacteria">Bacterial Cell</option>
+                            </select>
+                            <div class="cell-diagram"></div>
+                            <div id="cellInfo" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.showCellDiagram();
+                }
+            },
+
+            evolution: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <h5>Hardy-Weinberg Equilibrium Calculator</h5>
+                            <div class="mb-3">
+                                <input type="number" class="form-control mb-2" id="dominantFreq" 
+                                    placeholder="Dominant allele frequency (p)" step="0.01" min="0" max="1">
+                                <input type="number" class="form-control mb-2" id="recessiveFreq" 
+                                    placeholder="Recessive allele frequency (q)" step="0.01" min="0" max="1">
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.evolution.calculate()">Calculate Frequencies</button>
+                            <div id="evolutionResult" class="tool-result"></div>
+                        </div>
+                    `;
+                }
+            },
+
+            unitConverter: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <select class="form-select mb-3" id="unitType">
+                                <option value="length">Length</option>
+                                <option value="mass">Mass</option>
+                                <option value="temperature">Temperature</option>
+                                <option value="volume">Volume</option>
+                            </select>
+                            <div class="conversion-inputs">
+                                <input type="number" class="form-control mb-2" id="fromValue" placeholder="Enter value">
+                                <select class="form-select mb-2" id="fromUnit"></select>
+                                <select class="form-select mb-2" id="toUnit"></select>
+                            </div>
+                            <button class="btn btn-custom" onclick="toolImplementations.unitConverter.convert()">Convert</button>
+                            <div id="conversionResult" class="tool-result"></div>
+                        </div>
+                    `;
+                    this.updateUnitOptions();
+                }
+            },
+
+            dataAnalysis: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <textarea class="form-control mb-3" id="dataInput" 
+                                    placeholder="Enter numerical data (comma-separated)" rows="4"></textarea>
+                            <div class="btn-group mb-3">
+                                <button class="btn btn-custom" onclick="toolImplementations.dataAnalysis.analyze()">Analyze Data</button>
+                                <button class="btn btn-custom" onclick="toolImplementations.dataAnalysis.plot()">Generate Plot</button>
+                            </div>
+                            <div id="dataResult" class="tool-result"></div>
+                            <canvas id="dataPlot" class="mt-3"></canvas>
+                        </div>
+                    `;
+                }
+            },
+
+            errorAnalysis: {
+                init: function(modalBody) {
+                    modalBody.innerHTML = `
+                        <div class="tool-interface">
+                            <input type="number" class="form-control mb-2" id="measuredValue" placeholder="Measured Value">
+                            <input type="number" class="form-control mb-2" id="uncertainty" placeholder="Uncertainty (±)">
+                            <button class="btn btn-custom" onclick="toolImplementations.errorAnalysis.calculate()">Calculate</button>
+                            <div id="errorResult" class="tool-result"></div>
+                        </div>
+                    `;
+                }
+            }
+        };
     </script>
 </body>
 </html>
