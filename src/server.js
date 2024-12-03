@@ -25,6 +25,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/pages/index.html'));
 });
 
+app.get('/terms', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/pages/terms.html'));
+});
+
+app.get('/privacy', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/pages/privacy.html'));
+});
+
+app.get('/faq', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/pages/faq.html'));
+});
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/pages/login.html'));
 });
