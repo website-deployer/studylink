@@ -296,10 +296,11 @@
                     body: JSON.stringify({ email, password, rememberMe })
                 });
 
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else if (!response.ok) {
-                    const data = await response.json();
+                const data = await response.json();
+                
+                if (response.ok && data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
                     showError(data.message || 'Login failed');
                 }
             } catch (error) {
