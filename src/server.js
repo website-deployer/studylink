@@ -13,7 +13,7 @@ const users = [];
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'studylink-secret-key-KlH4S93BE',
     resave: false,
@@ -67,27 +67,27 @@ const isAuthenticated = (req, res, next) => {
 
 // Public routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/index.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/index.html'));
 });
 
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/about.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/about.html'));
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/login.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/login.html'));
 });
 
 app.get('/privacy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/privacy.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/privacy.html'));
 });
 
 app.get('/terms', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/terms.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/terms.html'));
 });
 
 app.get('/faq', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/pages/faq.html'));
+    res.sendFile(path.join(process.cwd(), 'public/pages/faq.html'));
 });
 
 // Auth routes
@@ -153,7 +153,7 @@ app.get('/logout', (req, res) => {
 
 // Protected routes
 app.get('/aihelp', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/aihelp.html'));
+    res.sendFile(path.join(process.cwd(), 'views/aihelp.html'));
 });
 
 // API routes
@@ -166,7 +166,7 @@ app.get('/api/user', isAuthenticated, (req, res) => {
 
 // Error handling
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'public/pages/404.html'));
+    res.status(404).sendFile(path.join(process.cwd(), 'public/pages/404.html'));
 });
 
 app.use((err, req, res, next) => {
