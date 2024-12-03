@@ -400,6 +400,21 @@
             // Initialize the modal
             const toolModal = new bootstrap.Modal(document.getElementById('toolModal'));
 
+            // Subject tab switching
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', () => {
+                    // Show corresponding content
+                    const subject = card.dataset.subject;
+                    document.querySelectorAll('.subject-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    document.getElementById(`${subject}Tools`).style.display = 'block';
+                });
+            });
+
+            // Initialize first subject tab
+            document.querySelector('.card').click();
+
             // Tool opening handler
             window.openTool = function(toolId) {
                 const modalTitle = document.querySelector('.modal-title');
