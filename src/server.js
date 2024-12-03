@@ -90,7 +90,6 @@ app.get('/faq', (req, res) => {
 });
 
 // Auth routes
-// Update the register route
 app.post('/register', async (req, res) => {
     const { email, password, name } = req.body;
     
@@ -125,7 +124,7 @@ app.post('/login', async (req, res) => {
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
         const redirectTo = req.query.redirect || '/aihelp';
-        res.redirect(redirectTo);  // Changed from res.json to res.redirect
+        res.json({ redirect: redirectTo });  // Change back to res.json
     });
 });
 
