@@ -415,6 +415,25 @@
                 toolModal.show();
             };
 
+            // Add an event listener for subject tab clicks
+            const subjectTabs = document.querySelectorAll('.subject-tab');
+            const subjectContents = document.querySelectorAll('.subject-content');
+
+            subjectTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove 'active' class from all tabs and hide contents
+                    subjectTabs.forEach(t => t.classList.remove('active'));
+                    subjectContents.forEach(content => content.classList.remove('active'));
+
+                    // Add 'active' class to the clicked tab
+                    tab.classList.add('active');
+                    
+                    // Show the corresponding content
+                    const subject = tab.getAttribute('data-subject');
+                    document.querySelector(`#${subject}Tools`).classList.add('active');
+                });
+            });
+
             // Loading state handler
             window.showLoading = function(show) {
                 const loadingSpinner = document.getElementById('loadingSpinner');
