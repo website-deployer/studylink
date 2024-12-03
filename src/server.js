@@ -90,6 +90,7 @@ app.get('/faq', (req, res) => {
 });
 
 // Auth routes
+// Update the register route
 app.post('/register', async (req, res) => {
     const { email, password, name } = req.body;
     
@@ -108,7 +109,23 @@ app.post('/register', async (req, res) => {
     
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
-        res.json({ redirect: '/aihelp' });
+        res.redirect('/aihelp');  // Changed from res.json to res.redirect
+    });
+});
+
+// Update the login route
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const user = users.find(u => u.email === email);
+    
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    req.login(user, (err) => {
+        if (err) return res.status(500).json({ message: 'Error logging in' });
+        const redirectTo = req.query.redirect || '/aihelp';
+        res.redirect(redirectTo);  // Changed from res.json to res.redirect
     });
 });
 
@@ -123,7 +140,7 @@ app.post('/login', async (req, res) => {
     req.login(user, (err) => {
         if (err) return res.status(500).json({ message: 'Error logging in' });
         const redirectTo = req.query.redirect || '/aihelp';
-        res.json({ redirect: redirectTo });
+        res.redirect(redirectTo);  // Changed from res.json to res.redirect
     });
 });
 
@@ -179,6 +196,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(port, () => { 
+app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
